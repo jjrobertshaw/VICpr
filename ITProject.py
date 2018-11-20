@@ -146,11 +146,14 @@ Commands = {
 }
 	
 #Game Loop
-print ('(type \"help\" to get a list of actions)')
+#JR - added following 3 lines:
+print(" ")
+print('**********************(TYPE "help" TO GET A LIST OF ACTIONS)**********************')
+print(" ")
 print(player.name, 'enters a dark cave, searching for adventure. You will soon face the', monster.name.lower(), '\n')
 
 while player.health > 0 and monster.health > 0:
-    print('\n')
+#JR - unnecessary    print('\n')
     #Get input, if it is a valid command execute it
     line = input('What do you want to do?\n')
     if line in Commands.keys():
