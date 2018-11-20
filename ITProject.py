@@ -7,16 +7,35 @@ class LivingThing():
         self.health = 1
 	
 	#Causes living thing to take damage over time
+	#JR - Changed so damage taken is based on difficulty
     def tire(self):
-	    self.health = self.health - 2 
+        if diff == 'hard':
+            self.health = self.health - randint(2, 4)
+        elif diff == 'medium':
+            self.health = self.health - randint(1, 3)
+        elif diff == 'easy':
+            self.health = self.health - randint(0, 1)
+            # JR - old code: self.health = self.health - 2 
 	
     #Reduce living thing health by specified amount
     def hurt(self, dmg):
         self.health = self.health - dmg
 	
-	#Regenerate health
+    #Regenerate health
+    #JR - Changed so health regeneration is based on difficulty
     def heal(self):
-	    self.health = self.health + 1
+        if diff == 'hard':
+            if self.health < 5:
+                self.health = self.health + randint(0,1)
+        elif diff == 'medium':
+            if self.health < 8:
+                self.health = self.health + 1
+            elif self.health < 15:
+                self.health = self.health + randint(0,1)
+        elif diff == 'easy':
+            if self.health < 15:
+                self.health = self.health + 1
+                # JR - old code: self.health = self.health + 1
 	
 
 #Player class
@@ -106,8 +125,6 @@ class Player(LivingThing):
 
 	#Allows player to use an item
     def use(self, monster):
-        	
-            
 		
 #Monster class
 class Monster(LivingThing):
@@ -116,6 +133,14 @@ class Monster(LivingThing):
         self.health = health
         self.status = 'regular'
         self.attack_dmg = attack_dmg
+
+#JR - Difficulty
+diff_choice = ["easy", "medium", "hard"]
+diff = input('What difficulty would you like (easy/medium/hard)? ')
+while diff not in diff_choice:
+    print(" ")
+    print('Please check spelling and caps.')
+    diff = input('What difficulty would you like (easy/medium/hard)? ')
 
 #Take player's name
 name = input('What is your name?\n')
