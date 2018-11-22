@@ -1,6 +1,37 @@
 from random import randint, choice
 
+#JD - Item super class
+class ItemBase:
+    def __init__ (name):
+        self.name = name
+    #An "Abstract" base method with no implementation
+    def use(self):
+        raise NotImplementedError("Method not implemented for item base class")
 
+#JD - Consumable item derived class
+class ItemConsumable(ItemBase):
+    def __init__ (self, name, message):
+        self.name = name
+        self.message = message;
+    def use(self): 
+        player.heal()
+        print(self.message)
+
+#JD - Weapon item derived class
+class ItemWeapon(ItemBase):
+    def __init__(self, name, message, dmg):
+        self.name = name
+        self.message = message
+        self.dmg = dmg
+    def use(self):
+        monster.hurt(self.dmg)
+        print(self.message)
+
+#Item definitions
+pizza = ItemConsumable("Nino's Pizza", "Pizza consumed, restoring some health")
+fishChips = ItemConsumable("Fish and Chips", "Nothing's better than Victor's fish and chips")
+tennisBall = ItemWeapon("Tennis Ball", "Tennis ball was thrown, doing 4 damage", 4)
+	
 #Super class for "Living Things"
 class LivingThing():
     def __init__(self):
@@ -45,12 +76,11 @@ class Player(LivingThing):
         self.name = name
         self.health = health
         self.status = 'regular'
-        self.inventory = {'Foo': 2, 'Bar': 1}
+        self.inventory = {"Nino's Pizza" : [pizza, 2], "Tennis Ball" : [tennisBall, 1]}
 		
     #Show the user their options
     def help(self, monster):
-        print(' ')
-        print('Your options are:')
+        print('\nYour options are:')
         for key in Commands.keys():
             print(key)
 		
@@ -60,8 +90,7 @@ class Player(LivingThing):
         print(self.name + '\'s stats:')
         print('Health:', self.health)
         print('Current status:', self.status)
-        print('You have some Fubars to boost your health!')
-#        print('Inventory [2/5]')
+        print('Inventory:')
         for item in self.inventory:
             print(" - ", item, ':', self.inventory[item])
         print(monster.name, 'health is', str(monster.health) + '.')
@@ -124,12 +153,14 @@ class Player(LivingThing):
         else:
             print('You are safe.')
 
-    #Allows player to use an item
-# JR - added content of this def as it was creating indentation block errors without it.
+    #Allows player to use an item - JD
     def use(self, monster):
-        print(' ')
-        player.health = player.health + 2
-        print("A fubar was used to boost your health by 2")
+        if(item in self.inventory):
+            self.inventory[item][0].use()
+            self.inventory[item][1] = self.inventory[item][1] - 1;
+	    #Remove item from inventory if quantity is now at 0
+            if(self.inventory[item][1] == 0):
+                del self.inventory[item]
 
 # Monster class #
 class Monster(LivingThing):
@@ -154,31 +185,30 @@ name = input('What is your name? ')
 player = Player(name, 20)
 
 #Monsters
-goblin = Monster('Grumpy Elderly Person', 6, 2)
-spider = Monster('Killer Penguin', 8, 4)
-dragon = Monster('Whale', 14, 6)
+geezer = Monster('Grumpy Elderly Person', 6, 2)
+penguin = Monster('Killer Penguin', 8, 4)
+while = Monster('Whale', 14, 6)
 
 #List of fightable monsters
 #JR - added monster choice based on difficulty
 monsters = []
 if diff == "easy":
-    monsters.append(goblin)
+    monsters.append(geezer)
 elif diff == "medium":
-    monsters.append(spider)
+    monsters.append(penguin)
 elif diff == "hard":
-    monsters.append(dragon)
+    monsters.append(whale)
 
 #Choose a random monster
 monster = choice(monsters)
 		
-#Constant list of valid inputs
+#Constant list of valid inputs, player.use was removed - JD
 Commands = {
 'help': player.help,
 'stats': player.stats,
 'explore': player.explore,
 'run': player.run,
 'fight': player.fight,
-'use': player.use
 }
 	
 #Game Loop
@@ -195,8 +225,9 @@ while player.health > 0 and monster.health > 0:
     line = input('What do you want to do? ')
     if line in Commands.keys():
         Commands[line](monster)
-    elif line[0:3] == "use":
-        print("FUBAR")
+    elif line[:3] == "use":
+	#Process string and use item
+	player.use(line[4:])
     else:
         print(player.name, 'does not understand.')
 
@@ -204,6 +235,5 @@ while player.health > 0 and monster.health > 0:
 if player.health <= 0 and monster.health > 0:
     print(player.name, 'was slain.')
 
-print(' ')
-print('-=+Game Over+=-')
+print('\n-=+Game Over+=-')
 
