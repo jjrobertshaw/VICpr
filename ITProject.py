@@ -154,7 +154,7 @@ class Player(LivingThing):
             print('You are safe.')
 
     #Allows player to use an item - JD
-    def use(self, monster):
+    def use(self, monster, item):
         if(item in self.inventory):
             self.inventory[item][0].use()
             self.inventory[item][1] = self.inventory[item][1] - 1;
