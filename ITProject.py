@@ -1,11 +1,12 @@
 from random import randint, choice
 
+
 #Super class for "Living Things"
 class LivingThing():
-    def __init__ (self):
+    def __init__(self):
         self.name = 'null'
         self.health = 1
-	
+    
 	#Causes living thing to take damage over time
 	#JR - Changed so damage taken is based on difficulty
     def tire(self):
@@ -26,12 +27,12 @@ class LivingThing():
     def heal(self):
         if diff == 'hard':
             if self.health < 5:
-                self.health = self.health + randint(0,1)
+                self.health = self.health + randint(0, 1)
         elif diff == 'medium':
             if self.health < 8:
                 self.health = self.health + 1
             elif self.health < 15:
-                self.health = self.health + randint(0,1)
+                self.health = self.health + randint(0, 1)
         elif diff == 'easy':
             if self.health < 15:
                 self.health = self.health + 1
@@ -44,89 +45,92 @@ class Player(LivingThing):
         self.name = name
         self.health = health
         self.status = 'regular'
-        self.inventory = {'Foo' : 2, 'Bar' : 1}
+        self.inventory = {'Foo': 2, 'Bar': 1}
 		
     #Show the user their options
     def help(self, monster):
-        print('\n')
+        print(' ')
         print('Your options are:')
         for key in Commands.keys():
             print(key)
 		
 	#Displays the player's stats
     def stats(self, monster):
-        print('\n')
+        print(' ')
         print(self.name + '\'s stats:')
         print('Health:', self.health)
         print('Current status:', self.status)
-        print('Inventory [2/5]')
+        print('You have some Fubars to boost your health!')
+#        print('Inventory [2/5]')
         for item in self.inventory:
             print(" - ", item, ':', self.inventory[item])
-        print(monster.name, 'health is', monster.health, '\n')
+        print(monster.name, 'health is', str(monster.health) + '.')
 		
     #Allows the player to "search" the envieronment
     def explore(self, monster):
         #Heal player
         self.heal()
-        print('\n')
-        print('Your health is now', self.health)
+        print(' ')
+        print('Your health is now', str(self.health) + '.')
         
 		#Inventory test <--- Ignore this
         if randint(0, 1) == 1:
 	        #Increase the number of Fubars if one Fubar has already been collected
             if 'Fubar' in self.inventory:
-                print(player.name, 'found another Fubar')
+                print(player.name, 'found another Fubar.')
                 self.inventory['Fubar'] = self.inventory['Fubar'] + 1
             else:
-                print('Fubar acquired')
+                print('Fubar acquired!')
                 self.inventory['Fubar'] = 1
 	    
 		#Determine if an encounter occurs
         if randint(0, 1) == 1:
-            print(monster.name, 'confronts you')
-            print('What do you do?')
+            print(monster.name, 'confronts you...')
+            #print('What do you do?')
             self.status = 'confronted'
 	
 	#Null
     def run(self, monster):
 	    #Determine if player escapes
         if randint(0, self.health) < randint (0, monster.health):
-            print('\n')
-            print('A monster has appeared')
+            print(' ')
+            print('A monster has appeared.')
             self.status = 'confronted'
             self.fight(monster)
         else:
             self.tire()
             monster.heal()
-            print('\n')
+            print(' ')
             print('Your health suffered by running.')
-            print('health is now', self.health)
+            print('health is now', str(self.health) + '.')
 
 	
-	#Fight the monster
+    #Fight the monster
     def fight(self, monster):
         if self.status == 'confronted':
             monster.hurt(2)
             self.hurt(monster.attack_dmg)
-            print('\n')
-            print(monster.name, 'attacked you, doing', monster.attack_dmg, 'damage')
+            print(monster.name, 'attacked you, doing', monster.attack_dmg, 'damage.')
             
             #Print info
             if self.health <= 0:
-                print('You were killed by the', monster.name.lower(), '\n')
+                print('You were killed by the', monster.name.lower() + '.')
             elif monster.health > 0:
-                print('You survived the', monster.name.lower())
-                print('Your health is now', self.health)
+                print('You survived the', monster.name.lower() + '.')
+                print('Your health is now', str(self.health) + '.')
             else:
-                print('Victory! You defeated the ', monster.name.lower())
+                print('Victory! You defeated the ', monster.name.lower() + '.')
         
         else:
             print('You are safe.')
 
-	#Allows player to use an item
+    #Allows player to use an item
     def use(self, monster):
-		
-#Monster class
+        print(' ')
+        player.health = player.health + 2
+        print("A fubar was used to boost your health by 2")
+
+# Monster class #
 class Monster(LivingThing):
     def __init__(self, name, health, attack_dmg):
         self.name = name
@@ -136,6 +140,7 @@ class Monster(LivingThing):
 
 #JR - Difficulty
 diff_choice = ["easy", "medium", "hard"]
+print(" ")
 diff = input('What difficulty would you like (easy/medium/hard)? ')
 while diff not in diff_choice:
     print(" ")
@@ -143,31 +148,36 @@ while diff not in diff_choice:
     diff = input('What difficulty would you like (easy/medium/hard)? ')
 
 #Take player's name
-name = input('What is your name?\n')
+print(" ")
+name = input('What is your name? ')
 player = Player(name, 20)
 
 #Monsters
-goblin = Monster('Goblin', 30,5)
-spider = Monster('Spider', 20, 10)
-dragon = Monster('Dragon', 50, 15)
+goblin = Monster('Grumpy Elderly Person', 6, 2)
+spider = Monster('Killer Penguin', 8, 4)
+dragon = Monster('Whale', 14, 6)
 
 #List of fightable monsters
+#JR - added monster choice based on difficulty
 monsters = []
-monsters.append(goblin)
-monsters.append(spider)
-monsters.append(dragon)
+if diff == "easy":
+    monsters.append(goblin)
+elif diff == "medium":
+    monsters.append(spider)
+elif diff == "hard":
+    monsters.append(dragon)
 
 #Choose a random monster
 monster = choice(monsters)
 		
 #Constant list of valid inputs
 Commands = {
-'help' : player.help,
-'stats' : player.stats,
-'explore' : player.explore,
-'run' : player.run,
-'fight' : player.fight,
-'use' : player.use
+'help': player.help,
+'stats': player.stats,
+'explore': player.explore,
+'run': player.run,
+'fight': player.fight,
+'use': player.use
 }
 	
 #Game Loop
@@ -175,17 +185,21 @@ Commands = {
 print(" ")
 print('**********************(TYPE "help" TO GET A LIST OF ACTIONS)**********************')
 print(" ")
-print(player.name, 'enters a dark cave, searching for adventure. You will soon face the', monster.name.lower(), '\n')
+print(player.name, 'enters Victor Harbor, searching for the perfect store. When walking down the street, you run into a', monster.name.lower() + '.')
 
+#JR - unnecessary    "print('\n')"
+#Get input, if it is a valid command execute it
 while player.health > 0 and monster.health > 0:
-#JR - unnecessary    print('\n')
-    #Get input, if it is a valid command execute it
-    line = input('What do you want to do?\n')
+    line = input('What do you want to do? ')
     if line in Commands.keys():
         Commands[line](monster)
-	elif line[0:3] == "use":
-	    print("FUBAR")
+    elif line[0:3] == "use":
+        print("FUBAR")
     else:
-	    print(player.name, 'does not understand.')
+        print(player.name, 'does not understand.')
+if player.health <= 0 and monster.health > 0:
+    print(player.name, 'was slain.')
 
-print(player.name, 'was slain.\n-=+Game Over+=-')
+print(' ')
+print('-=+Game Over+=-')
+
