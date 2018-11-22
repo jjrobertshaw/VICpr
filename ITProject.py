@@ -125,6 +125,7 @@ class Player(LivingThing):
             print('You are safe.')
 
     #Allows player to use an item
+# JR - added content of this def as it was creating indentation block errors without it.
     def use(self, monster):
         print(' ')
         player.health = player.health + 2
@@ -185,6 +186,7 @@ Commands = {
 print(" ")
 print('**********************(TYPE "help" TO GET A LIST OF ACTIONS)**********************')
 print(" ")
+#JR - altered this to fit with our game rather than old one
 print(player.name, 'enters Victor Harbor, searching for the perfect store. When walking down the street, you run into a', monster.name.lower() + '.')
 
 #JR - unnecessary    "print('\n')"
@@ -197,6 +199,8 @@ while player.health > 0 and monster.health > 0:
         print("FUBAR")
     else:
         print(player.name, 'does not understand.')
+
+# JR - changed so that eg. "Jackson was slain." didn't appear when player killed monster
 if player.health <= 0 and monster.health > 0:
     print(player.name, 'was slain.')
 
